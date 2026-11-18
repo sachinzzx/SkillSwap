@@ -3,6 +3,7 @@ const {
   errorHandler,
   notFoundHandler,
 } = require("./middlewares/error.middleware");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.get("/api/health", (_req, res) => {
     message: "SkillSwap API running",
   });
 });
+
+app.use("/api/v1/auth", authRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
