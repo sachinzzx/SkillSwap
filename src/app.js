@@ -4,6 +4,7 @@ const {
   notFoundHandler,
 } = require("./middlewares/error.middleware");
 const authRoutes = require("./routes/auth.routes");
+const skillRoutes = require("./routes/skill.routes");
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1", skillRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
