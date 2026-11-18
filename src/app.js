@@ -6,6 +6,7 @@ const {
 const authRoutes = require("./routes/auth.routes");
 const skillRoutes = require("./routes/skill.routes");
 const userRoutes = require("./routes/user.routes");
+const matchRoutes = require("./routes/match.routes");
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", skillRoutes);
 app.use("/api/v1", userRoutes);
+app.use("/api/v1/match", matchRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
