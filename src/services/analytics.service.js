@@ -1,4 +1,5 @@
 const prisma = require("../config/prisma");
+const SessionNote = require("../models/SessionNote.model");
 
 class AnalyticsService {
   /**
@@ -131,6 +132,42 @@ class AnalyticsService {
       )
       ORDER BY s.name ASC
     `;
+  }
+
+  /**
+   * MongoDB aggregation pipeline:
+   * match recent notes, unwind tags, count sessions per tag, and return top five.
+   * @returns {Promise<object[]>} Trending tags.
+   */
+  async getTrendingTags() {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 30);
+
+    return SessionNote.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: cutoff },
+        },
+      },
+      { $unwind: "$tags" },
+      {
+        $group: {
+          _id: "$tags",
+          totalSessions: { $sum: 1 },
+          sampleResources: { $push: "$resources" },
+        },
+      },
+      { $sort: { totalSessions: -1 } },
+      { $limit: 5 },
+      {
+        $project: {
+          _id: 0,
+          tag: "$_id",
+          totalSessions: 1,
+          sampleResources: 1,
+        },
+      },
+    ]);
   }
 }
 

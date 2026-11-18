@@ -34,6 +34,10 @@ const sessionNoteSchema = new mongoose.Schema(
       index: true,
     },
     comments: [commentSchema],
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: false },
 );

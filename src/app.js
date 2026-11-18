@@ -12,6 +12,7 @@ const coinRoutes = require("./routes/coin.routes");
 const reviewRoutes = require("./routes/review.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
 const chatRoutes = require("./routes/chat.routes");
+const noteRoutes = require("./routes/note.routes");
 const accessLogger = require("./middlewares/logger.middleware");
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/api/v1/coins", coinRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/chat", chatRoutes);
+app.use("/api/v1/notes", noteRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

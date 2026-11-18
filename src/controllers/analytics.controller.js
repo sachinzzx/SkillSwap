@@ -48,10 +48,20 @@ const getSkillDemandGap = asyncHandler(async (_req, res) => {
   });
 });
 
+const getTrendingTags = asyncHandler(async (_req, res) => {
+  const data = await analyticsService.getTrendingTags();
+  res.status(200).json({
+    success: true,
+    message: "Trending tags retrieved successfully",
+    data,
+  });
+});
+
 module.exports = {
   getTopMentors,
   getBudgetTeachers,
   getPopularCategories,
   getCoinEconomyStats,
   getSkillDemandGap,
+  getTrendingTags,
 };

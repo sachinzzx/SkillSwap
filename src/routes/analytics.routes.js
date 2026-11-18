@@ -6,6 +6,7 @@ const {
   getPopularCategories,
   getCoinEconomyStats,
   getSkillDemandGap,
+  getTrendingTags,
 } = require("../controllers/analytics.controller");
 const { authenticate, authorize } = require("../middlewares/auth.middleware");
 
@@ -16,5 +17,6 @@ router.get("/budget-teachers", authenticate, authorize("ADMIN"), getBudgetTeache
 router.get("/popular-categories", authenticate, authorize("ADMIN"), getPopularCategories);
 router.get("/economy", authenticate, authorize("ADMIN"), getCoinEconomyStats);
 router.get("/demand-gap", authenticate, authorize("ADMIN"), getSkillDemandGap);
+router.get("/trending-tags", getTrendingTags);
 
 module.exports = router;
