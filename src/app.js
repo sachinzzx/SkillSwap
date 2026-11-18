@@ -17,17 +17,34 @@ const accessLogger = require("./middlewares/logger.middleware");
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 app.use(accessLogger);
 
-/**
- * @param {import("express").Request} _req - Express request.
- * @param {import("express").Response} res - Express response.
- */
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
     success: true,
     message: "SkillSwap API running",
+  });
+});
+
+app.get("/", (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "SkillSwap API",
+    data: {
+      health: "/api/health",
+      auth: "/api/v1/auth",
+      skills: "/api/v1/skills",
+      categories: "/api/v1/categories",
+      users: "/api/v1/users",
+      matching: "/api/v1/match",
+      sessions: "/api/v1/sessions",
+      coins: "/api/v1/coins",
+      reviews: "/api/v1/reviews",
+      analytics: "/api/v1/analytics",
+      chat: "/api/v1/chat",
+      notes: "/api/v1/notes",
+    },
   });
 });
 
