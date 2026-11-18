@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum SkillType {
+  TEACH
+  LEARN
+}
+
+enum SessionStatus {
+  BOOKED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  password     String
+  role         Role     @default(USER)
+  coins        Int      @default(50)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+
+  userSkills        UserSkill[]
+  taughtSessions    Session[]        @relation("Teacher")
+  learnedSessions   Session[]        @relation("Learner")
+  coinTransactionsSent     CoinTransaction[] @relation("Sender")
+  coinTransactionsReceived CoinTransaction[] @relation("Receiver")
+  reviewsGiven      Review[]         @relation("Reviewer")
+  reviewsReceived   Review[]         @relation("Reviewed")
+}
+
+model Category {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  skills Skill[]
+}
+
+model Skill {
+  id         Int     @id @default(autoincrement())
+  name       String  @unique
+  level      Level   @default(BEGINNER)
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  userSkills UserSkill[]
+  sessions   Session[]
+}
+
+model UserSkill {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  skillId       Int
+  type          SkillType
+  hourlyCoinRate Int
+
+  user  User  @relation(fields: [userId], references: [id])
+  skill Skill @relation(fields: [skillId], references: [id])
+
+  @@unique([userId, skillId, type])
+  @@index([skillId, type])
+}
+
+model Session {
+  id          Int           @id @default(autoincrement())
+  teacherId   Int
+  learnerId   Int
+  skillId     Int
+  status      SessionStatus @default(BOOKED)
+  scheduledAt DateTime
+  duration    Int
+  coinsCost   Int
+  createdAt   DateTime      @default(now())
+
+  teacher User @relation("Teacher", fields: [teacherId], references: [id])
+  learner User @relation("Learner", fields: [learnerId], references: [id])
+  skill   Skill @relation(fields: [skillId], references: [id])
+
+  coinTransactions CoinTransaction[]
+  review           Review?
+
+  @@index([teacherId, status])
+  @@index([learnerId])
+}
+
+model CoinTransaction {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  amount     Int
+  reason     String
+  sessionId  Int?
+  createdAt  DateTime @default(now())
+
+  sender   User     @relation("Sender", fields: [senderId], references: [id])
+  receiver User     @relation("Receiver", fields: [receiverId], references: [id])
+  session  Session? @relation(fields: [sessionId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  sessionId  Int      @unique
+  reviewerId Int
+  reviewedId Int
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  session  Session @relation(fields: [sessionId], references: [id])
+  reviewer User    @relation("Reviewer", fields: [reviewerId], references: [id])
+  reviewed User    @relation("Reviewed", fields: [reviewedId], references: [id])
+}
