@@ -8,6 +8,8 @@ const skillRoutes = require("./routes/skill.routes");
 const userRoutes = require("./routes/user.routes");
 const matchRoutes = require("./routes/match.routes");
 const sessionRoutes = require("./routes/session.routes");
+const coinRoutes = require("./routes/coin.routes");
+const reviewRoutes = require("./routes/review.routes");
 
 const app = express();
 
@@ -39,6 +41,8 @@ app.use("/api/v1", skillRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/v1/match", matchRoutes);
 app.use("/api/v1/sessions", sessionRoutes);
+app.use("/api/v1/coins", coinRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
