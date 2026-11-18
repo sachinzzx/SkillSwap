@@ -1,5 +1,7 @@
 const prisma = require("../config/prisma");
 const ActivityLog = require("../models/ActivityLog.model");
+const CertificateService = require("./certificate.service");
+const certificateService = new CertificateService();
 const {
   BadRequestError,
   ConflictError,
@@ -185,6 +187,11 @@ class SessionService {
         metadata: { sessionId: completed.id },
       }),
     ]);
+
+    // Generate the receipt without delaying the completion response.
+    certificateService
+      .generateReceipt(completed.id)
+      .catch((error) => console.error("Failed to generate session receipt:", error));
 
     return completed;
   }

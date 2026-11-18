@@ -10,20 +10,12 @@ const matchRoutes = require("./routes/match.routes");
 const sessionRoutes = require("./routes/session.routes");
 const coinRoutes = require("./routes/coin.routes");
 const reviewRoutes = require("./routes/review.routes");
+const accessLogger = require("./middlewares/logger.middleware");
 
 const app = express();
 
 app.use(express.json());
-
-/**
- * @param {import("express").Request} req - Express request.
- * @param {import("express").Response} _res - Express response.
- * @param {import("express").NextFunction} next - Express next function.
- */
-app.use((req, _res, next) => {
-  console.log(`${req.method} ${req.url} ${new Date().toISOString()}`);
-  next();
-});
+app.use(accessLogger);
 
 /**
  * @param {import("express").Request} _req - Express request.

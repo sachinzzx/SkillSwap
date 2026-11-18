@@ -1,8 +1,12 @@
 const SessionService = require("../services/session.service");
 const asyncHandler = require("../utils/asyncHandler");
 const { BadRequestError } = require("../errors");
+const prisma = require("../config/prisma");
+const CertificateService = require("../services/certificate.service");
+const { ForbiddenError, NotFoundError } = require("../errors");
 
 const sessionService = new SessionService();
+const certificateService = new CertificateService();
 
 const bookSession = asyncHandler(async (req, res) => {
   const { teacherId, skillId, scheduledAt, duration } = req.body;
@@ -63,9 +67,26 @@ const getMySessions = asyncHandler(async (req, res) => {
   });
 });
 
+const downloadReceipt = asyncHandler(async (req, res) => {
+  const session = await prisma.session.findUnique({
+    where: { id: Number(req.params.id) },
+  });
+  if (!session) throw new NotFoundError("Session not found");
+  if (
+    session.teacherId !== req.user.userId &&
+    session.learnerId !== req.user.userId
+  ) {
+    throw new ForbiddenError("Only the session teacher or learner can download the receipt");
+  }
+
+  const filePath = await certificateService.getReceiptPath(session.id);
+  res.download(filePath);
+});
+
 module.exports = {
   bookSession,
   completeSession,
   cancelSession,
   getMySessions,
+  downloadReceipt,
 };
