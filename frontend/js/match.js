@@ -97,6 +97,9 @@
     }
   });
 
-  window.loadMatchTab = searchTeachers;
+  window.loadMatchTab = async function () {
+    document.getElementById("match-results").innerHTML =
+      '<div class="rounded-xl border border-dashed border-white/10 p-5 text-sm text-slate-500 sm:col-span-2">Select a skill and search for teachers.</div>';
+  };
   window.findBarterMatches = findBarterMatches;
 })();

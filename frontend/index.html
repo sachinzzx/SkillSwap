@@ -245,9 +245,17 @@
           <section id="tab-chat" class="dashboard-panel hidden" data-panel="chat">
             <div class="grid min-h-[520px] gap-5 lg:grid-cols-[280px_1fr]">
               <aside class="rounded-2xl border border-white/10 bg-panel p-4">
-                <h2 class="text-lg font-bold text-white">Conversations</h2>
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-bold text-white">Conversations</h2>
+                  <span id="chat-unread-badge" class="hidden rounded-full border border-rose-400/30 bg-rose-500/10 px-2 py-1 text-[10px] font-bold text-rose-300">0 unread</span>
+                </div>
+                <label for="chat-partner-id" class="mt-4 block text-xs font-bold uppercase tracking-wider text-slate-500">Partner user ID</label>
+                <div class="mt-2 flex gap-2">
+                  <input id="chat-partner-id" type="number" min="1" placeholder="User ID" class="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white outline-none focus:border-indigo-400/70" />
+                  <button id="open-chat-button" type="button" class="rounded-xl bg-indigo-500 px-3 py-2 text-sm font-bold text-white">Open</button>
+                </div>
                 <div id="chat-list" class="mt-4 space-y-2">
-                  <div class="rounded-xl border border-dashed border-white/10 p-4 text-sm text-slate-500">Loading chats...</div>
+                  <div class="rounded-xl border border-dashed border-white/10 p-4 text-sm text-slate-500">Enter a partner user ID to open a conversation.</div>
                 </div>
               </aside>
 
@@ -271,11 +279,29 @@
                   <p class="text-xs font-bold uppercase tracking-wider text-slate-500">MongoDB session resources</p>
                   <h2 class="mt-1 text-lg font-bold text-white">Session Notes</h2>
                 </div>
-                <button id="save-session-note" class="rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-3 py-2 text-sm font-bold text-indigo-300" type="button">Save note</button>
+                <button id="load-session-note" class="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-slate-300" type="button">Load note</button>
+              </div>
+              <div class="mb-4 grid gap-3 md:grid-cols-2">
+                <input id="note-session-id" type="number" min="1" placeholder="Session ID" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
+                <input id="note-tags" type="text" placeholder="Tags (comma-separated)" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
               </div>
               <div class="grid gap-4 md:grid-cols-2">
                 <textarea id="teacher-notes" placeholder="Teacher notes..." class="min-h-32 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-white outline-none focus:border-indigo-400/70"></textarea>
                 <textarea id="learner-notes" placeholder="Learner notes..." class="min-h-32 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-white outline-none focus:border-indigo-400/70"></textarea>
+              </div>
+              <div class="mt-4 flex flex-wrap gap-2">
+                <button id="save-session-note" type="button" class="rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-3 py-2 text-sm font-bold text-indigo-300">Save note</button>
+                <button id="search-note-tags" type="button" class="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-slate-300">Search tags</button>
+              </div>
+              <div id="note-search-results" class="mt-4 grid gap-3"></div>
+              <div class="mt-4 grid gap-3 md:grid-cols-3">
+                <input id="note-resource-title" type="text" placeholder="Resource title" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
+                <input id="note-resource-url" type="url" placeholder="https://example.com" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
+                <button id="add-note-resource" type="button" class="rounded-xl border border-cyan-400/30 bg-cyan-500/10 px-3 py-3 text-sm font-bold text-cyan-300">Add resource</button>
+              </div>
+              <div class="mt-3 flex gap-3">
+                <input id="note-comment" type="text" placeholder="Add an embedded comment..." class="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
+                <button id="add-note-comment" type="button" class="rounded-xl border border-amber-400/30 bg-amber-500/10 px-3 py-3 text-sm font-bold text-amber-300">Comment</button>
               </div>
             </article>
           </section>

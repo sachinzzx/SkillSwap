@@ -148,5 +148,5 @@
 
   window.updateCoinBalance = updateCoinBalance;
   window.logout = logout;
-  restoreSession();
+  window.restoreSession = restoreSession;
 })();
