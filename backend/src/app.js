@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const {
   errorHandler,
   notFoundHandler,
@@ -27,27 +28,6 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
-app.get("/", (_req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "SkillSwap API",
-    data: {
-      health: "/api/health",
-      auth: "/api/v1/auth",
-      skills: "/api/v1/skills",
-      categories: "/api/v1/categories",
-      users: "/api/v1/users",
-      matching: "/api/v1/match",
-      sessions: "/api/v1/sessions",
-      coins: "/api/v1/coins",
-      reviews: "/api/v1/reviews",
-      analytics: "/api/v1/analytics",
-      chat: "/api/v1/chat",
-      notes: "/api/v1/notes",
-    },
-  });
-});
-
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", skillRoutes);
 app.use("/api/v1", userRoutes);
@@ -58,6 +38,12 @@ app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/chat", chatRoutes);
 app.use("/api/v1/notes", noteRoutes);
+
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/index.html"));
+});
+
+app.use(express.static(path.join(__dirname, "../../frontend")));
 
 app.use(notFoundHandler);
 app.use(errorHandler);

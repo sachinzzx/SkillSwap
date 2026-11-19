@@ -1,0 +1,249 @@
+@baseUrl = http://localhost:5000/api/v1
+
+### 1. Register teacher (User A)
+# @name registerA
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Request Teacher",
+  "email": "request.teacher@example.com",
+  "password": "User@123"
+}
+
+### 1. Register learner (User B)
+# @name registerB
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Request Learner",
+  "email": "request.learner@example.com",
+  "password": "User@123"
+}
+
+### 2. Login User A
+# @name loginA
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "request.teacher@example.com",
+  "password": "User@123"
+}
+
+@tokenA = {{loginA.response.body.data.accessToken}}
+@userAId = {{loginA.response.body.data.user.id}}
+
+### 2. Login User B
+# @name loginB
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "request.learner@example.com",
+  "password": "User@123"
+}
+
+@tokenB = {{loginB.response.body.data.accessToken}}
+@userBId = {{loginB.response.body.data.user.id}}
+
+### 2. Login seeded admin for protected analytics
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@skillswap.com",
+  "password": "Admin@123"
+}
+
+@tokenAdmin = {{loginAdmin.response.body.data.accessToken}}
+
+### 3. User A teaches skill 1
+# @name addTeachSkill
+POST {{baseUrl}}/users/skills
+Authorization: Bearer {{tokenA}}
+Content-Type: application/json
+
+{
+  "skillId": 1,
+  "type": "TEACH",
+  "hourlyCoinRate": 20
+}
+
+### 3. User B wants to learn skill 1
+# @name addLearnSkill
+POST {{baseUrl}}/users/skills
+Authorization: Bearer {{tokenB}}
+Content-Type: application/json
+
+{
+  "skillId": 1,
+  "type": "LEARN"
+}
+
+### 4. Find teachers for skill 1
+GET {{baseUrl}}/match/teachers?skillId=1
+Authorization: Bearer {{tokenB}}
+
+### 5. User B books a 60-minute session with User A
+# @name bookSession
+POST {{baseUrl}}/sessions
+Authorization: Bearer {{tokenB}}
+Content-Type: application/json
+
+{
+  "teacherId": {{userAId}},
+  "skillId": 1,
+  "scheduledAt": "2026-12-10T15:00:00.000Z",
+  "duration": 60
+}
+
+@sessionId = {{bookSession.response.body.data.id}}
+
+### 6. User A completes the session
+PATCH {{baseUrl}}/sessions/{{sessionId}}/complete
+Authorization: Bearer {{tokenA}}
+
+### 7. Check User B balance (expected 30 coins)
+GET {{baseUrl}}/coins/balance
+Authorization: Bearer {{tokenB}}
+
+### 7. Check User A balance (expected 70 coins)
+GET {{baseUrl}}/coins/balance
+Authorization: Bearer {{tokenA}}
+
+### 7. Check both coin histories
+GET {{baseUrl}}/coins/history
+Authorization: Bearer {{tokenB}}
+
+###
+GET {{baseUrl}}/coins/history
+Authorization: Bearer {{tokenA}}
+
+### 8. User B downloads the session receipt
+GET {{baseUrl}}/sessions/{{sessionId}}/receipt
+Authorization: Bearer {{tokenB}}
+
+### 9. User B posts a review
+# @name createReview
+POST {{baseUrl}}/reviews
+Authorization: Bearer {{tokenB}}
+Content-Type: application/json
+
+{
+  "sessionId": {{sessionId}},
+  "rating": 5,
+  "comment": "Excellent teacher and a very clear lesson."
+}
+
+### 10. User B sends a chat message to User A
+POST {{baseUrl}}/chat/{{userAId}}/message
+Authorization: Bearer {{tokenB}}
+Content-Type: application/json
+
+{
+  "text": "Thanks for the Python lesson!"
+}
+
+### 10. User A reads the conversation
+PATCH {{baseUrl}}/chat/{{userBId}}/read
+Authorization: Bearer {{tokenA}}
+
+###
+GET {{baseUrl}}/chat/{{userBId}}
+Authorization: Bearer {{tokenA}}
+
+###
+GET {{baseUrl}}/chat/unread/count
+Authorization: Bearer {{tokenA}}
+
+### 11. Create/update session note
+POST {{baseUrl}}/notes/{{sessionId}}
+Authorization: Bearer {{tokenB}}
+Content-Type: application/json
+
+{
+  "learnerNotes": "Practice list comprehensions and decorators.",
+  "tags": ["python", "beginner"]
+}
+
+### 11. Add a comment
+POST {{baseUrl}}/notes/{{sessionId}}/comments
+Authorization: Bearer {{tokenA}}
+Content-Type: application/json
+
+{
+  "text": "Please complete the exercises before the next session."
+}
+
+### 11. Add a resource
+POST {{baseUrl}}/notes/{{sessionId}}/resources
+Authorization: Bearer {{tokenA}}
+Content-Type: application/json
+
+{
+  "title": "Python official tutorial",
+  "url": "https://docs.python.org/3/tutorial/"
+}
+
+### 11. Get session note
+GET {{baseUrl}}/notes/{{sessionId}}
+Authorization: Bearer {{tokenB}}
+
+### 11. Search notes by tags
+GET {{baseUrl}}/notes/search?tags=python,beginner
+Authorization: Bearer {{tokenB}}
+
+### 12. Analytics: top mentors (public)
+GET {{baseUrl}}/analytics/top-mentors
+
+### 12. Analytics: budget teachers (admin)
+GET {{baseUrl}}/analytics/budget-teachers
+Authorization: Bearer {{tokenAdmin}}
+
+### 12. Analytics: popular categories (admin)
+GET {{baseUrl}}/analytics/popular-categories
+Authorization: Bearer {{tokenAdmin}}
+
+### 12. Analytics: economy (admin)
+GET {{baseUrl}}/analytics/economy
+Authorization: Bearer {{tokenAdmin}}
+
+### 12. Analytics: demand gap (admin)
+GET {{baseUrl}}/analytics/demand-gap
+Authorization: Bearer {{tokenAdmin}}
+
+### 12. Analytics: trending tags (public)
+GET {{baseUrl}}/analytics/trending-tags
+
+### Negative: request protected route without authentication (401)
+GET {{baseUrl}}/sessions/my
+
+### Negative: learner attempts to complete the session (403)
+PATCH {{baseUrl}}/sessions/{{sessionId}}/complete
+Authorization: Bearer {{tokenB}}
+
+### Negative: User B has insufficient coins for a 180-minute booking (400)
+POST {{baseUrl}}/sessions
+Authorization: Bearer {{tokenB}}
+Content-Type: application/json
+
+{
+  "teacherId": {{userAId}},
+  "skillId": 1,
+  "scheduledAt": "2026-12-11T15:00:00.000Z",
+  "duration": 180
+}
+
+### Negative: duplicate review for the same completed session (409)
+POST {{baseUrl}}/reviews
+Authorization: Bearer {{tokenB}}
+Content-Type: application/json
+
+{
+  "sessionId": {{sessionId}},
+  "rating": 4,
+  "comment": "Duplicate review attempt."
+}

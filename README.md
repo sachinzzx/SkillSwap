@@ -52,6 +52,7 @@ Requires Node.js 18+, PostgreSQL, and MongoDB.
 ```bash
 git clone <repository-url>
 cd SkillSwap
+cd backend
 npm install
 cp .env.example .env
 npx prisma migrate dev
