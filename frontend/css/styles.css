@@ -30,6 +30,25 @@ button {
   box-shadow: 0 0 18px rgba(250, 204, 21, 0.12);
 }
 
+.coin-pulse {
+  animation: coin-pulse 700ms ease-out;
+}
+
+@keyframes coin-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.12);
+  }
+  45% {
+    transform: scale(1.12);
+    box-shadow: 0 0 30px rgba(250, 204, 21, 0.55);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.12);
+  }
+}
+
 .toast {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.75rem;

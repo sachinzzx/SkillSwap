@@ -140,6 +140,19 @@
                   </div>
                   <button id="add-skill-button" class="rounded-lg bg-indigo-500 px-3 py-2 text-sm font-bold text-white hover:bg-indigo-400" type="button">+ Add skill</button>
                 </div>
+                <form id="add-skill-form" class="mt-4 hidden grid gap-3 rounded-xl border border-indigo-400/20 bg-indigo-500/5 p-4 sm:grid-cols-4">
+                  <select id="add-skill-id" name="skillId" class="rounded-xl border border-white/10 bg-[#17171f] px-3 py-2 text-sm text-white sm:col-span-2">
+                    <option value="">Select a skill</option>
+                  </select>
+                  <select id="add-skill-type" name="type" class="rounded-xl border border-white/10 bg-[#17171f] px-3 py-2 text-sm text-white">
+                    <option value="TEACH">Teach</option>
+                    <option value="LEARN">Learn</option>
+                  </select>
+                  <div id="add-skill-rate-wrap">
+                    <input id="add-skill-rate" name="hourlyCoinRate" type="number" min="1" value="10" class="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white" />
+                  </div>
+                  <button type="submit" class="rounded-xl bg-indigo-500 px-3 py-2 text-sm font-bold text-white sm:col-start-4">Add</button>
+                </form>
                 <div id="skills-list" class="grid gap-3 sm:grid-cols-2">
                   <div class="rounded-xl border border-dashed border-white/10 p-4 text-sm text-slate-500">Loading your teaching and learning skills...</div>
                 </div>
@@ -176,8 +189,10 @@
                 <h2 class="text-lg font-bold text-white">Direct skill swap</h2>
                 <p class="mt-1 text-sm text-slate-400">Set your swap preferences.</p>
                 <form id="match-form" class="mt-4 space-y-3">
-                  <input id="match-teach" name="teach" type="text" placeholder="I can teach..." class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                  <input id="match-learn" name="learn" type="text" placeholder="I want to learn..." class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
+                  <select id="match-skill" name="skillId" class="w-full rounded-xl border border-white/10 bg-[#17171f] px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70">
+                    <option value="">Select a skill</option>
+                  </select>
+                  <input id="match-max-rate" name="maxRate" type="number" min="0" placeholder="Maximum coin rate" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
                   <button type="submit" class="w-full rounded-xl bg-indigo-500 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-400">Find direct swap</button>
                 </form>
               </article>
@@ -196,6 +211,7 @@
               <article class="rounded-2xl border border-white/10 bg-panel p-5">
                 <h2 class="text-lg font-bold text-white">Book a session</h2>
                 <form id="session-book-form" class="mt-4 space-y-3">
+                  <input id="session-teacher-id" name="teacherId" type="hidden" />
                   <label class="block">
                     <span class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Skill</span>
                     <select id="session-skill" name="skillId" class="w-full rounded-xl border border-white/10 bg-[#17171f] px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70">
