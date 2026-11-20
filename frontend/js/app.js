@@ -4,11 +4,8 @@
   window.switchDashboardTab = function (name) {
     document.querySelectorAll("[data-tab]").forEach(function (tab) {
       const active = tab.dataset.tab === name;
-      tab.classList.toggle("border-indigo-400", active);
-      tab.classList.toggle("bg-indigo-500/10", active);
-      tab.classList.toggle("text-white", active);
-      tab.classList.toggle("border-transparent", !active);
-      tab.classList.toggle("text-slate-400", !active);
+      tab.classList.toggle("active", active);
+      tab.setAttribute("aria-selected", active ? "true" : "false");
     });
     document.querySelectorAll("[data-panel]").forEach(function (panel) {
       panel.classList.toggle("hidden", panel.dataset.panel !== name);
@@ -46,6 +43,18 @@
   window.loadDashboardData = async function () {
     await window.loadDashboardTab("skills");
     await window.loadDashboardTab("sessions");
+    try {
+      const sessions = await window.apiRequest("/sessions/my");
+      const upcoming = sessions.filter(function (session) {
+        return session.status === "BOOKED" && new Date(session.scheduledAt) >= new Date();
+      }).length;
+      const status = document.getElementById("dashboard-live-status");
+      if (status) {
+        status.textContent = upcoming
+          ? upcoming + (upcoming === 1 ? " session is coming up." : " sessions are coming up.")
+          : "No upcoming sessions. Find your next exchange.";
+      }
+    } catch (_error) {}
   };
 
   function initializeApp() {

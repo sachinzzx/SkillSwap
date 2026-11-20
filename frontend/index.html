@@ -5,59 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#09090b" />
     <title>SkillSwap - Learn, Teach, Exchange</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              ink: "#09090b",
-              panel: "#111118",
-              indigo: {
-                450: "#7475f5"
-              }
-            }
-          }
-        }
-      };
-    </script>
+    <link rel="stylesheet" href="/css/mint.css" />
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
-  <body class="min-h-screen bg-ink text-slate-100">
-    <nav class="sticky top-0 z-40 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
-      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-        <button id="brand-home" class="flex items-center gap-2 text-xl font-black tracking-tight text-white" type="button">
-          <span class="text-2xl">⚡</span>
-          <span>SkillSwap</span>
+  <body>
+    <nav class="global-header">
+      <div class="header-inner">
+        <button id="brand-home" class="brand" type="button" aria-label="SkillSwap home">
+          <span class="brand-mark" aria-hidden="true"><span></span></span>
+          <span class="brand-name">SkillSwap</span>
         </button>
 
-        <div id="navbar-user" class="hidden items-center gap-2 sm:gap-3">
-          <div class="hidden rounded-xl border border-white/10 bg-white/5 px-3 py-2 md:block">
-            <p id="nav-user-name" class="text-sm font-semibold text-white">Learner</p>
-            <p id="nav-user-role" class="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-300">USER</p>
+        <div id="navbar-user" class="header-actions hidden">
+          <span id="admin-header-strip" class="admin-header-strip hidden">ADMIN</span>
+          <div class="user-chip">
+            <span id="header-avatar" class="avatar" aria-hidden="true">U</span>
+            <span class="user-copy">
+              <strong id="nav-user-name">Learner</strong>
+              <span id="nav-user-role" class="role-sticker">USER</span>
+            </span>
           </div>
-          <div id="skillcoin-wallet" class="badge-glow rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-2 text-sm font-bold text-yellow-300">
-            🪙 <span id="nav-coins">50</span> SkillCoins
+          <div id="skillcoin-wallet" class="coin-wallet" aria-label="Open wallet">
+            <span class="mini-coin" aria-hidden="true"></span>
+            <span><strong id="nav-coins">50</strong> <small>SC</small></span>
           </div>
-          <button id="logout-button" class="rounded-lg border border-white/10 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:border-rose-400/40 hover:bg-rose-500/10 hover:text-rose-300" type="button">
-            Logout
-          </button>
+          <button class="icon-button" type="button" data-theme-toggle aria-label="Switch theme" title="Theme">◐</button>
+          <button id="logout-button" class="button button-ghost logout-button" type="button">Log out</button>
         </div>
       </div>
     </nav>
 
     <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <section id="auth-view" class="mx-auto max-w-md">
-        <div class="mb-6 text-center">
-          <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-indigo-400/30 bg-indigo-500/10 text-3xl shadow-[0_0_40px_rgba(99,102,241,0.18)]">
-            ⚡
-          </div>
-          <h1 class="text-3xl font-black tracking-tight text-white">Exchange skills. Grow together.</h1>
-          <p class="mt-2 text-sm text-slate-400">Teach what you know. Learn what you need.</p>
-        </div>
-
-        <div class="overflow-hidden rounded-2xl border border-white/10 bg-panel shadow-2xl shadow-indigo-950/20">
-          <div class="grid grid-cols-2 border-b border-white/10">
+        <div class="m-panel">
+          <div class="grid grid-cols-2">
             <button id="login-tab" class="auth-tab border-b-2 border-indigo-400 px-4 py-4 text-sm font-bold text-white" type="button" data-auth-tab="login">
               Login
             </button>
@@ -66,285 +47,459 @@
             </button>
           </div>
 
-          <div class="p-5 sm:p-6">
+          <div class="m-modal__body">
             <form id="login-form" class="space-y-4" data-auth-form="login">
-              <div>
-                <label for="login-email" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">Email</label>
-                <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-400/70" />
+              <div class="m-field">
+                <label for="login-email" class="m-label">Email</label>
+                <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="m-input" />
               </div>
-              <div>
-                <label for="login-password" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">Password</label>
-                <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-400/70" />
+              <div class="m-field">
+                <label for="login-password" class="m-label">Password</label>
+                <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" class="m-input" />
               </div>
-              <button type="submit" class="w-full rounded-xl bg-indigo-500 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-400">
+              <button type="submit" class="m-btn m-btn--primary m-btn--block">
                 Sign in
               </button>
             </form>
 
             <form id="register-form" class="hidden space-y-4" data-auth-form="register">
-              <div>
-                <label for="register-name" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">Name</label>
-                <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Your name" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-400/70" />
+              <div class="m-field">
+                <label for="register-name" class="m-label">Name</label>
+                <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Your name" class="m-input" />
               </div>
-              <div>
-                <label for="register-email" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">Email</label>
-                <input id="register-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-400/70" />
+              <div class="m-field">
+                <label for="register-email" class="m-label">Email</label>
+                <input id="register-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="m-input" />
               </div>
-              <div>
-                <label for="register-password" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">Password</label>
-                <input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Create a password" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-400/70" />
+              <div class="m-field">
+                <label for="register-password" class="m-label">Password</label>
+                <input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Create a password" class="m-input" />
               </div>
-              <div class="rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-4 py-3 text-center text-sm font-bold text-yellow-300">
+              <div class="rounded-xl border px-4 py-3 text-center text-sm font-bold">
                 Get 50 Free SkillCoins on signup!
               </div>
-              <button type="submit" class="w-full rounded-xl bg-indigo-500 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-400">
+              <button type="submit" class="m-btn m-btn--primary m-btn--block">
                 Create account
               </button>
             </form>
 
-            <div class="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
-              <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Demo credentials</p>
-              <p class="mt-1 text-sm text-slate-300">admin@skillswap.com / Admin@123</p>
+            <div class="mt-5 rounded-xl border p-3 text-center">
+              <p class="text-xs font-bold uppercase">Demo credentials</p>
+              <p class="mt-1 text-sm">admin@skillswap.com / Admin@123</p>
             </div>
           </div>
         </div>
       </section>
 
       <section id="dashboard-view" class="hidden">
-        <header class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <header class="dashboard-heading">
           <div>
-            <p class="mb-1 text-xs font-bold uppercase tracking-[0.22em] text-indigo-400">Skill exchange hub</p>
-            <h1 class="text-3xl font-black tracking-tight text-white">Welcome back, <span id="dashboard-name">Learner</span></h1>
+            <p class="eyebrow">SKILLS EXCHANGE HUB</p>
+            <h1>Good morning, <span id="dashboard-name">Learner</span>.</h1>
+            <p id="dashboard-live-status" class="live-status">Checking your next move...</p>
           </div>
-          <p id="dashboard-date" class="text-sm text-slate-500"></p>
+          <p id="dashboard-date" class="date-stamp"></p>
         </header>
 
-        <div class="overflow-x-auto border-b border-white/10">
-          <nav id="dashboard-tabs" class="flex min-w-max gap-1" aria-label="Dashboard sections">
-            <button class="dashboard-tab rounded-t-xl border-b-2 border-indigo-400 bg-indigo-500/10 px-4 py-3 text-sm font-bold text-white" type="button" data-tab="skills">🎯 My Skills &amp; Coin Ledger</button>
-            <button class="dashboard-tab rounded-t-xl border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-400" type="button" data-tab="match">🤝 Match &amp; Direct Swap</button>
-            <button class="dashboard-tab rounded-t-xl border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-400" type="button" data-tab="sessions">📅 Sessions &amp; Receipts</button>
-            <button class="dashboard-tab rounded-t-xl border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-400" type="button" data-tab="chat">💬 Chat &amp; Session Notes</button>
-            <button class="dashboard-tab rounded-t-xl border-b-2 border-transparent px-4 py-3 text-sm font-bold text-slate-400" type="button" data-tab="analytics">📊 Analytics Showcase</button>
+        <div class="tabs-wrap">
+          <nav id="dashboard-tabs" class="dashboard-tabs" aria-label="Dashboard sections" role="tablist">
+            <button class="dashboard-tab active" type="button" data-tab="skills" role="tab" aria-selected="true"><span class="tab-index">01</span><span>Skills &amp; Ledger</span></button>
+            <button class="dashboard-tab" type="button" data-tab="match" role="tab" aria-selected="false"><span class="tab-index">02</span><span>Match &amp; Swap</span></button>
+            <button class="dashboard-tab" type="button" data-tab="sessions" role="tab" aria-selected="false"><span class="tab-index">03</span><span>Sessions</span></button>
+            <button class="dashboard-tab" type="button" data-tab="chat" role="tab" aria-selected="false"><span class="tab-index">04</span><span>Chat &amp; Notes</span></button>
+            <button class="dashboard-tab" type="button" data-tab="analytics" role="tab" aria-selected="false"><span class="tab-index">05</span><span>Analytics</span></button>
           </nav>
         </div>
 
-        <div class="pt-6">
-          <section id="tab-skills" class="dashboard-panel space-y-5" data-panel="skills">
-            <div class="grid gap-5 lg:grid-cols-3">
-              <article class="rounded-2xl border border-white/10 bg-panel p-5 lg:col-span-2">
-                <div class="mb-4 flex items-center justify-between">
+        <div class="dashboard-panels m-stack">
+          <section id="tab-skills" class="dashboard-panel m-stack" data-panel="skills">
+            <div class="m-grid m-grid--2">
+              <article class="m-panel">
+                <div class="m-panel__head">
                   <div>
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Your profile</p>
-                    <h2 class="mt-1 text-xl font-bold text-white">My Skills</h2>
+                    <p class="m-eyebrow">Your profile</p>
+                    <h2 class="m-title">My Skills</h2>
                   </div>
-                  <button id="add-skill-button" class="rounded-lg bg-indigo-500 px-3 py-2 text-sm font-bold text-white hover:bg-indigo-400" type="button">+ Add skill</button>
+                  <button id="add-skill-button" class="m-btn m-btn--primary" type="button">+ Add skill</button>
                 </div>
-                <form id="add-skill-form" class="mt-4 hidden grid gap-3 rounded-xl border border-indigo-400/20 bg-indigo-500/5 p-4 sm:grid-cols-4">
-                  <select id="add-skill-id" name="skillId" class="rounded-xl border border-white/10 bg-[#17171f] px-3 py-2 text-sm text-white sm:col-span-2">
-                    <option value="">Select a skill</option>
-                  </select>
-                  <select id="add-skill-type" name="type" class="rounded-xl border border-white/10 bg-[#17171f] px-3 py-2 text-sm text-white">
-                    <option value="TEACH">Teach</option>
-                    <option value="LEARN">Learn</option>
-                  </select>
-                  <div id="add-skill-rate-wrap">
-                    <input id="add-skill-rate" name="hourlyCoinRate" type="number" min="1" value="10" class="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white" />
+                <div class="m-grid m-grid--even">
+                  <div>
+                    <h3 class="m-h3">Skills I teach</h3>
+                    <div id="skills-list">
+                      <div class="m-skel"></div>
+                    </div>
                   </div>
-                  <button type="submit" class="rounded-xl bg-indigo-500 px-3 py-2 text-sm font-bold text-white sm:col-start-4">Add</button>
-                </form>
-                <div id="skills-list" class="grid gap-3 sm:grid-cols-2">
-                  <div class="rounded-xl border border-dashed border-white/10 p-4 text-sm text-slate-500">Loading your teaching and learning skills...</div>
+                  <div>
+                    <h3 class="m-h3">Skills I want to learn</h3>
+                    <div id="learning-skills-list">
+                      <div class="m-skel"></div>
+                    </div>
+                  </div>
                 </div>
               </article>
 
-              <article class="rounded-2xl border border-white/10 bg-panel p-5">
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Wallet activity</p>
-                <h2 class="mt-1 text-xl font-bold text-white">Coin Ledger</h2>
-                <div id="coin-ledger" class="mt-4 space-y-3">
-                  <div class="h-12 animate-pulse rounded-xl bg-white/5"></div>
-                  <div class="h-12 animate-pulse rounded-xl bg-white/5"></div>
-                  <div class="h-12 animate-pulse rounded-xl bg-white/5"></div>
-                </div>
-              </article>
-            </div>
-          </section>
+              <div class="m-stack">
+                <article class="m-panel m-panel--butter">
+                  <div style="display:flex;align-items:center;gap:20px;">
+                    <span class="m-coin m-coin--xl" aria-hidden="true"></span>
+                    <div>
+                      <p id="coin-balance" class="m-stat__num" data-coins="0">0</p>
+                      <p class="m-stat__label">SkillCoins available</p>
+                    </div>
+                  </div>
+                </article>
 
-          <section id="tab-match" class="dashboard-panel hidden space-y-5" data-panel="match">
-            <article class="rounded-2xl border border-emerald-400/30 bg-gradient-to-r from-emerald-500/10 via-cyan-500/5 to-indigo-500/10 p-5 shadow-[0_0_40px_rgba(16,185,129,0.08)]">
-              <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">0-Coin exchange</p>
-                  <h2 class="mt-1 text-xl font-black text-white">⚡ Find 0-Coin Barter Matches</h2>
-                  <p class="mt-1 text-sm text-slate-400">Find someone who teaches what you want and wants to learn what you teach.</p>
-                </div>
-                <button id="find-barter-button" class="shrink-0 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-300 transition hover:bg-emerald-400/20" type="button">
-                  Find matches
-                </button>
+                <article class="m-panel">
+                  <div class="m-panel__head">
+                    <div>
+                      <p class="m-eyebrow">Wallet activity</p>
+                      <h2 class="m-title">Coin Ledger</h2>
+                    </div>
+                  </div>
+                  <div id="coin-ledger" class="m-tape">
+                    <div class="m-skel"></div>
+                    <div class="m-skel"></div>
+                    <div class="m-skel"></div>
+                  </div>
+                </article>
               </div>
-            </article>
-
-            <div class="grid gap-5 lg:grid-cols-3">
-              <article class="rounded-2xl border border-white/10 bg-panel p-5">
-                <h2 class="text-lg font-bold text-white">Direct skill swap</h2>
-                <p class="mt-1 text-sm text-slate-400">Set your swap preferences.</p>
-                <form id="match-form" class="mt-4 space-y-3">
-                  <select id="match-skill" name="skillId" class="w-full rounded-xl border border-white/10 bg-[#17171f] px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70">
-                    <option value="">Select a skill</option>
-                  </select>
-                  <input id="match-max-rate" name="maxRate" type="number" min="0" placeholder="Maximum coin rate" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                  <button type="submit" class="w-full rounded-xl bg-indigo-500 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-400">Find direct swap</button>
-                </form>
-              </article>
-
-              <article class="rounded-2xl border border-white/10 bg-panel p-5 lg:col-span-2">
-                <h2 class="text-lg font-bold text-white">Matches</h2>
-                <div id="match-results" class="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div class="rounded-xl border border-dashed border-white/10 p-5 text-sm text-slate-500">No matches loaded yet.</div>
-                </div>
-              </article>
             </div>
-          </section>
 
-          <section id="tab-sessions" class="dashboard-panel hidden space-y-5" data-panel="sessions">
-            <div class="grid gap-5 lg:grid-cols-3">
-              <article class="rounded-2xl border border-white/10 bg-panel p-5">
-                <h2 class="text-lg font-bold text-white">Book a session</h2>
-                <form id="session-book-form" class="mt-4 space-y-3">
-                  <input id="session-teacher-id" name="teacherId" type="hidden" />
-                  <label class="block">
-                    <span class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Skill</span>
-                    <select id="session-skill" name="skillId" class="w-full rounded-xl border border-white/10 bg-[#17171f] px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70">
+            <dialog id="add-skill-dialog" class="m-modal" aria-labelledby="add-skill-dialog-title">
+              <div class="m-modal__body">
+                <div class="m-panel__head">
+                  <div>
+                    <p class="m-eyebrow">Your profile</p>
+                    <h2 id="add-skill-dialog-title" class="m-title">Add a skill</h2>
+                  </div>
+                  <button id="add-skill-dialog-close" class="m-btn m-btn--ghost m-btn--sm" type="button" aria-label="Close">Close</button>
+                </div>
+                <form id="add-skill-form">
+                  <div class="m-field">
+                    <label class="m-label" for="add-skill-id">Skill</label>
+                    <select id="add-skill-id" name="skillId" class="m-select">
                       <option value="">Select a skill</option>
                     </select>
-                  </label>
-                  <label class="block">
-                    <span class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Schedule</span>
-                    <input id="session-scheduled-at" name="scheduledAt" type="datetime-local" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                  </label>
-                  <label class="block">
-                    <span class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Duration (minutes)</span>
-                    <input id="session-duration" name="duration" type="number" min="15" step="15" value="60" class="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                  </label>
-                  <button type="submit" class="w-full rounded-xl bg-indigo-500 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-400">Book session</button>
+                  </div>
+                  <input id="add-skill-type" name="type" type="hidden" value="TEACH" />
+                  <div class="m-field">
+                    <span class="m-label">Type</span>
+                    <div class="m-row" role="group" aria-label="Skill type">
+                      <button class="m-btn m-btn--lime" type="button" data-skill-type="TEACH">Teach</button>
+                      <button class="m-btn m-btn--ghost" type="button" data-skill-type="LEARN">Learn</button>
+                    </div>
+                  </div>
+                  <div id="add-skill-rate-wrap" class="m-field">
+                    <label class="m-label" for="add-skill-rate">Hourly coin rate</label>
+                    <input id="add-skill-rate" name="hourlyCoinRate" type="number" min="1" step="1" value="10" class="m-input" />
+                  </div>
+                  <button id="add-skill-submit" type="submit" class="m-btn m-btn--primary m-btn--block">Add skill</button>
                 </form>
+              </div>
+            </dialog>
+          </section>
+
+          <section id="tab-match" class="dashboard-panel hidden m-stack" data-panel="match">
+            <div class="m-grid m-grid--2 m-match-layout">
+              <aside class="m-panel m-panel--lime m-sticky">
+                <div class="m-panel__head">
+                  <div>
+                    <p class="m-eyebrow">0-coin exchange</p>
+                    <h2 class="m-title">Find a match</h2>
+                  </div>
+                </div>
+
+                <section>
+                  <h3 class="m-h3">Barter swaps</h3>
+                  <p class="m-sub">Someone who teaches what you want and wants what you teach.</p>
+                  <button id="find-barter-button" class="m-btn m-btn--primary m-btn--block" type="button" style="margin-top:16px;">
+                    Find direct swaps
+                  </button>
+                </section>
+
+                <hr class="m-divider" />
+
+                <section>
+                  <h3 class="m-h3">Browse teachers</h3>
+                  <form id="match-form">
+                    <div class="m-field">
+                      <label class="m-label" for="match-skill">Skill</label>
+                      <select id="match-skill" name="skillId" class="m-select">
+                        <option value="">Select a skill</option>
+                      </select>
+                    </div>
+                    <div class="m-field">
+                      <label class="m-label" for="match-max-rate">Max hourly rate (coins)</label>
+                      <input id="match-max-rate" name="maxRate" type="number" min="0" placeholder="No maximum" class="m-input" />
+                      <span class="m-sub">Filter teachers by their hourly SkillCoin rate.</span>
+                    </div>
+                    <button type="submit" class="m-btn m-btn--lime m-btn--block">Search teachers</button>
+                  </form>
+                </section>
+              </aside>
+
+              <div id="match-results" class="m-stack">
+                <div class="m-skel"></div>
+                <div class="m-skel"></div>
+                <div class="m-skel"></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-sessions" class="dashboard-panel hidden m-stack" data-panel="sessions">
+            <div class="m-grid m-grid--2">
+              <article class="m-panel">
+                <div class="m-panel__head">
+                  <div>
+                    <p class="m-eyebrow">Session history</p>
+                    <h2 class="m-title">Your sessions</h2>
+                  </div>
+                  <span id="session-count" class="m-chip m-chip--mono">0 sessions</span>
+                </div>
+                <div id="sessions-list" class="m-stack">
+                  <div class="m-skel"></div>
+                  <div class="m-skel"></div>
+                  <div class="m-skel"></div>
+                </div>
               </article>
 
-              <article class="rounded-2xl border border-white/10 bg-panel p-5 lg:col-span-2">
-                <div class="mb-4 flex items-center justify-between">
-                  <h2 class="text-lg font-bold text-white">Your sessions</h2>
-                  <span id="session-count" class="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-400">0 sessions</span>
+              <aside class="m-panel m-panel--lime m-sticky">
+                <div class="m-panel__head">
+                  <div>
+                    <p class="m-eyebrow">Ticket booth</p>
+                    <h2 class="m-title">Book a session</h2>
+                  </div>
                 </div>
-                <div id="sessions-list" class="grid gap-3">
-                  <div class="rounded-xl border border-dashed border-white/10 p-5 text-sm text-slate-500">Loading sessions...</div>
-                </div>
-              </article>
+                <form id="session-book-form">
+                  <input id="session-teacher-id" name="teacherId" type="hidden" />
+                  <div class="m-field">
+                    <label class="m-label" for="session-skill">Skill</label>
+                    <select id="session-skill" name="skillId" class="m-select">
+                      <option value="">Select a skill</option>
+                    </select>
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="session-scheduled-at">Schedule</label>
+                    <input id="session-scheduled-at" name="scheduledAt" type="datetime-local" class="m-input" />
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="session-duration">Duration in minutes</label>
+                    <input id="session-duration" name="duration" type="number" min="15" step="15" value="60" class="m-input" />
+                    <div class="m-row" aria-label="Quick duration choices">
+                      <button class="m-chip" type="button" data-duration="30">30 min</button>
+                      <button class="m-chip" type="button" data-duration="60">60 min</button>
+                      <button class="m-chip" type="button" data-duration="90">90 min</button>
+                      <button class="m-chip" type="button" data-duration="120">120 min</button>
+                    </div>
+                  </div>
+                  <div id="session-cost-preview" class="m-tape" style="margin-bottom:18px;">
+                    <div class="m-empty">
+                      <strong>Pick a teacher in the Match tab first</strong>
+                    </div>
+                  </div>
+                  <div id="session-balance-warning" class="m-empty hidden" style="margin-bottom:18px;border-color:var(--m-coral);color:var(--m-coral);"></div>
+                  <button id="session-book-submit" type="submit" class="m-btn m-btn--primary m-btn--block" disabled>Book session</button>
+                </form>
+              </aside>
             </div>
+
+            <dialog id="review-session-dialog" class="m-modal" aria-labelledby="review-session-title">
+              <div class="m-modal__body">
+                <div class="m-panel__head">
+                  <div>
+                    <p class="m-eyebrow">Session review</p>
+                    <h2 id="review-session-title" class="m-title">Rate your session</h2>
+                  </div>
+                  <button id="review-session-close" class="m-btn m-btn--ghost m-btn--sm" type="button" aria-label="Close">Close</button>
+                </div>
+                <form id="review-session-form">
+                  <input id="review-session-id" type="hidden" />
+                  <div class="m-field">
+                    <span class="m-label">Rating</span>
+                    <div id="review-stars" class="m-stars" role="radiogroup" aria-label="Rating">
+                      <button type="button" data-rating="1" aria-label="1 star">★</button>
+                      <button type="button" data-rating="2" aria-label="2 stars">★</button>
+                      <button type="button" data-rating="3" aria-label="3 stars">★</button>
+                      <button type="button" data-rating="4" aria-label="4 stars">★</button>
+                      <button type="button" data-rating="5" aria-label="5 stars">★</button>
+                    </div>
+                    <input id="review-rating" type="hidden" value="5" />
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="review-comment">Comment</label>
+                    <textarea id="review-comment" class="m-textarea" placeholder="Optional feedback"></textarea>
+                  </div>
+                  <button id="review-session-submit" type="submit" class="m-btn m-btn--primary m-btn--block">Submit review</button>
+                </form>
+              </div>
+            </dialog>
           </section>
 
           <section id="tab-chat" class="dashboard-panel hidden" data-panel="chat">
-            <div class="grid min-h-[520px] gap-5 lg:grid-cols-[280px_1fr]">
-              <aside class="rounded-2xl border border-white/10 bg-panel p-4">
-                <div class="flex items-center justify-between">
-                  <h2 class="text-lg font-bold text-white">Conversations</h2>
-                  <span id="chat-unread-badge" class="hidden rounded-full border border-rose-400/30 bg-rose-500/10 px-2 py-1 text-[10px] font-bold text-rose-300">0 unread</span>
+            <div class="m-chat">
+              <aside class="m-chat__list">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                  <h3 class="m-h3">Conversations</h3>
+                  <span id="chat-unread-badge" class="m-chip m-chip--coral hidden">0 unread</span>
                 </div>
-                <label for="chat-partner-id" class="mt-4 block text-xs font-bold uppercase tracking-wider text-slate-500">Partner user ID</label>
-                <div class="mt-2 flex gap-2">
-                  <input id="chat-partner-id" type="number" min="1" placeholder="User ID" class="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white outline-none focus:border-indigo-400/70" />
-                  <button id="open-chat-button" type="button" class="rounded-xl bg-indigo-500 px-3 py-2 text-sm font-bold text-white">Open</button>
+                <div id="chat-list" class="m-stack" style="gap:8px;">
+                  <div class="m-skel"></div>
                 </div>
-                <div id="chat-list" class="mt-4 space-y-2">
-                  <div class="rounded-xl border border-dashed border-white/10 p-4 text-sm text-slate-500">Enter a partner user ID to open a conversation.</div>
+                <div style="margin-top:auto;">
+                  <h3 class="m-h3">Or enter an ID</h3>
+                  <div class="m-field">
+                    <label class="m-label" for="chat-partner-id">Partner user ID</label>
+                    <input id="chat-partner-id" type="number" min="1" placeholder="User ID" class="m-input" />
+                    <button id="open-chat-button" type="button" class="m-btn m-btn--sm">Open</button>
+                  </div>
                 </div>
               </aside>
 
-              <article class="flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-panel">
-                <header class="border-b border-white/10 px-5 py-4">
-                  <h2 id="chat-title" class="font-bold text-white">Select a conversation</h2>
-                </header>
-                <div id="chat-messages" class="custom-scrollbar flex-1 space-y-3 overflow-y-auto p-5">
-                  <p class="text-sm text-slate-500">Choose a chat to view messages.</p>
+              <article class="m-chat__pane">
+                <header id="chat-title" class="m-chat__head">Select a conversation</header>
+                <div id="chat-messages" class="m-chat__msgs">
+                  <div class="m-empty">
+                    <span class="m-empty__icon">💬</span>
+                    <strong>Select a conversation</strong>
+                    <span>Pick someone on the left to start chatting.</span>
+                  </div>
                 </div>
-                <form id="chat-form" class="flex gap-3 border-t border-white/10 p-4">
-                  <input id="chat-message" name="message" type="text" placeholder="Write a message..." class="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                  <button type="submit" class="rounded-xl bg-indigo-500 px-5 py-3 text-sm font-bold text-white hover:bg-indigo-400">Send</button>
+                <form id="chat-form" class="m-chat__send">
+                  <input id="chat-message" name="message" type="text" placeholder="Write a message..." class="m-input" />
+                  <button id="chat-send-button" type="submit" class="m-btn m-btn--primary">Send</button>
                 </form>
               </article>
             </div>
 
-            <article class="mt-5 rounded-2xl border border-white/10 bg-panel p-5">
-              <div class="mb-4 flex items-center justify-between">
+            <article class="m-panel" style="margin-top:32px;">
+              <div class="m-panel__head">
                 <div>
-                  <p class="text-xs font-bold uppercase tracking-wider text-slate-500">MongoDB session resources</p>
-                  <h2 class="mt-1 text-lg font-bold text-white">Session Notes</h2>
+                  <p class="m-eyebrow">MongoDB session resources</p>
+                  <h2 class="m-title">Session notes</h2>
                 </div>
-                <button id="load-session-note" class="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-slate-300" type="button">Load note</button>
               </div>
-              <div class="mb-4 grid gap-3 md:grid-cols-2">
-                <input id="note-session-id" type="number" min="1" placeholder="Session ID" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                <input id="note-tags" type="text" placeholder="Tags (comma-separated)" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-              </div>
-              <div class="grid gap-4 md:grid-cols-2">
-                <textarea id="teacher-notes" placeholder="Teacher notes..." class="min-h-32 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-white outline-none focus:border-indigo-400/70"></textarea>
-                <textarea id="learner-notes" placeholder="Learner notes..." class="min-h-32 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-white outline-none focus:border-indigo-400/70"></textarea>
-              </div>
-              <div class="mt-4 flex flex-wrap gap-2">
-                <button id="save-session-note" type="button" class="rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-3 py-2 text-sm font-bold text-indigo-300">Save note</button>
-                <button id="search-note-tags" type="button" class="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-slate-300">Search tags</button>
-              </div>
-              <div id="note-search-results" class="mt-4 grid gap-3"></div>
-              <div class="mt-4 grid gap-3 md:grid-cols-3">
-                <input id="note-resource-title" type="text" placeholder="Resource title" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                <input id="note-resource-url" type="url" placeholder="https://example.com" class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                <button id="add-note-resource" type="button" class="rounded-xl border border-cyan-400/30 bg-cyan-500/10 px-3 py-3 text-sm font-bold text-cyan-300">Add resource</button>
-              </div>
-              <div class="mt-3 flex gap-3">
-                <input id="note-comment" type="text" placeholder="Add an embedded comment..." class="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none focus:border-indigo-400/70" />
-                <button id="add-note-comment" type="button" class="rounded-xl border border-amber-400/30 bg-amber-500/10 px-3 py-3 text-sm font-bold text-amber-300">Comment</button>
+              <div class="m-grid m-grid--even">
+                <section>
+                  <div class="m-field">
+                    <label class="m-label" for="note-session-select">Session</label>
+                    <select id="note-session-select" class="m-select">
+                      <option value="">Select a session</option>
+                    </select>
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="note-session-id">Or enter session ID manually</label>
+                    <input id="note-session-id" type="number" min="1" placeholder="Session ID" class="m-input" />
+                  </div>
+                  <button id="load-session-note" class="m-btn m-btn--ghost" type="button">Load note</button>
+
+                  <div class="m-field" style="margin-top:18px;">
+                    <label class="m-label" for="note-tags">Tags</label>
+                    <input id="note-tags" type="text" placeholder="Type a tag and press Enter or comma" class="m-input" />
+                    <div id="note-tag-chips" class="m-chips"></div>
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="teacher-notes">Teacher notes</label>
+                    <textarea id="teacher-notes" placeholder="Teacher notes..." class="m-textarea"></textarea>
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="learner-notes">Learner notes</label>
+                    <textarea id="learner-notes" placeholder="Learner notes..." class="m-textarea"></textarea>
+                  </div>
+                  <div class="m-row">
+                    <button id="save-session-note" type="button" class="m-btn m-btn--primary">Save note</button>
+                    <button id="search-note-tags" type="button" class="m-btn m-btn--ghost">Search tags</button>
+                  </div>
+                  <div id="note-search-results" class="m-stack" style="margin-top:16px;">
+                    <div class="m-empty"><strong>No tag search yet</strong><span>Search for matching session notes.</span></div>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 class="m-h3">Resources</h3>
+                  <div id="note-resources" class="m-stack" style="gap:10px;margin-bottom:18px;">
+                    <div class="m-empty"><strong>No resources yet</strong><span>Add a link for this session.</span></div>
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="note-resource-title">Resource title</label>
+                    <input id="note-resource-title" type="text" placeholder="Resource title" class="m-input" />
+                  </div>
+                  <div class="m-field">
+                    <label class="m-label" for="note-resource-url">Resource URL</label>
+                    <input id="note-resource-url" type="url" placeholder="https://example.com" class="m-input" />
+                  </div>
+                  <button id="add-note-resource" type="button" class="m-btn m-btn--sm">Add resource</button>
+
+                  <hr class="m-divider" />
+                  <h3 class="m-h3">Comments</h3>
+                  <div id="note-comments" class="m-chat__msgs" style="max-height:260px;padding:0;">
+                    <div class="m-empty"><strong>No comments yet</strong><span>Start the session discussion.</span></div>
+                  </div>
+                  <div class="m-field" style="margin-top:12px;">
+                    <label class="m-label" for="note-comment">Comment</label>
+                    <div class="m-row">
+                      <input id="note-comment" type="text" placeholder="Add a comment..." class="m-input" />
+                      <button id="add-note-comment" type="button" class="m-btn m-btn--sm">Post</button>
+                    </div>
+                  </div>
+                </section>
               </div>
             </article>
           </section>
 
-          <section id="tab-analytics" class="dashboard-panel hidden space-y-5" data-panel="analytics">
-            <div class="grid gap-5 lg:grid-cols-3">
-              <article class="rounded-2xl border border-white/10 bg-panel p-5">
-                <div class="mb-4 flex items-center justify-between">
-                  <h2 class="text-lg font-bold text-white">Top Mentors</h2>
-                  <span class="text-amber-300">🏆</span>
+          <section id="tab-analytics" class="dashboard-panel hidden m-stack" data-panel="analytics">
+            <div id="analytics-summary" class="m-grid m-grid--stats">
+              <div class="m-stat m-stat--lime"><div class="m-stat__label">Mentor rankings</div><div class="m-stat__num" data-count="0">0</div></div>
+              <div class="m-stat m-stat--butter"><div class="m-stat__label">Trending tags</div><div class="m-stat__num" data-count="0">0</div></div>
+              <div class="m-stat"><div class="m-stat__label">Top mentor coins</div><div class="m-stat__num" data-count="0">0</div></div>
+              <div class="m-stat m-stat--lime"><div class="m-stat__label">Top mentor rating</div><div class="m-stat__num" data-count="0">0.0</div></div>
+            </div>
+
+            <div class="m-grid m-grid--even">
+              <article class="m-panel">
+                <div class="m-panel__head">
+                  <div>
+                    <p class="m-eyebrow">
+                      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-2px;"><path fill="currentColor" d="M7 4h10v3h3v2c0 3.31-2.69 6-6 6h-.1A5 5 0 0 1 13 17v1h4v2H7v-2h4v-1a5 5 0 0 1-.9-2H10c-3.31 0-6-2.69-6-6V7h3V4zm3 2v5.08A3.5 3.5 0 0 0 13.5 8H17V6H10zm-5 3c0 2.21 1.79 4 4 4h.08A5.01 5.01 0 0 1 8 11.5V9H5zm12 0v2.5a5 5 0 0 1-1.08 1.5H15c2.21 0 4-1.79 4-4v-1h-3z"/></svg>
+                      Mentor rankings
+                    </p>
+                    <h2 class="m-title">Top mentors</h2>
+                  </div>
                 </div>
-                <div id="leaderboard" class="space-y-3">
-                  <div class="h-12 animate-pulse rounded-xl bg-white/5"></div>
-                  <div class="h-12 animate-pulse rounded-xl bg-white/5"></div>
-                  <div class="h-12 animate-pulse rounded-xl bg-white/5"></div>
+                <div id="leaderboard" class="m-stack" style="gap:16px;">
+                  <div class="m-skel"></div>
+                  <div class="m-skel"></div>
+                  <div class="m-skel"></div>
                 </div>
               </article>
 
-              <article class="rounded-2xl border border-white/10 bg-panel p-5">
-                <h2 class="text-lg font-bold text-white">Trending Tags</h2>
-                <div id="trending-tags" class="mt-4 flex flex-wrap gap-2">
-                  <span class="rounded-full border border-indigo-400/20 bg-indigo-500/10 px-3 py-1 text-xs text-indigo-300">Loading...</span>
+              <article class="m-panel">
+                <div class="m-panel__head">
+                  <div>
+                    <p class="m-eyebrow">Live interests</p>
+                    <h2 class="m-title">Trending tags</h2>
+                  </div>
+                  <span class="m-sticker">MongoDB aggregation</span>
                 </div>
-              </article>
-
-              <article class="rounded-2xl border border-white/10 bg-panel p-5">
-                <div class="mb-4 flex items-center justify-between">
-                  <h2 class="text-lg font-bold text-white">Admin SQL Insights</h2>
-                  <span id="admin-insights-badge" class="hidden rounded-full border border-amber-400/20 bg-amber-400/10 px-2 py-1 text-[10px] font-bold text-amber-300">ADMIN</span>
-                </div>
-                <div id="admin-insights" class="space-y-3 text-sm text-slate-400">
-                  <p>Admin-only platform metrics will appear here.</p>
+                <div id="trending-tags" class="m-stack" style="gap:12px;">
+                  <div class="m-skel"></div>
+                  <div class="m-skel"></div>
+                  <div class="m-skel"></div>
                 </div>
               </article>
             </div>
 
-            <article class="rounded-2xl border border-white/10 bg-panel p-5">
-              <h2 class="text-lg font-bold text-white">Platform pulse</h2>
-              <div id="analytics-summary" class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <div class="h-24 animate-pulse rounded-xl bg-white/5"></div>
-                <div class="h-24 animate-pulse rounded-xl bg-white/5"></div>
-                <div class="h-24 animate-pulse rounded-xl bg-white/5"></div>
-                <div class="h-24 animate-pulse rounded-xl bg-white/5"></div>
+            <article id="admin-insights-section" class="m-panel m-panel--ink hidden">
+              <div class="m-panel__head">
+                <div>
+                  <p class="m-eyebrow">SQL performance insights</p>
+                  <h2 class="m-title">Admin SQL insights</h2>
+                </div>
+                <span id="admin-insights-badge" class="m-sticker hidden">ADMIN</span>
+              </div>
+              <div id="admin-insights" class="m-grid m-grid--3">
+                <div class="m-skel"></div>
+                <div class="m-skel"></div>
+                <div class="m-skel"></div>
               </div>
             </article>
           </section>
@@ -352,8 +507,9 @@
       </section>
     </main>
 
-    <div id="toast-container" class="toast-container fixed bottom-4 right-4 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2" aria-live="polite"></div>
+    <div id="toasts" class="m-toasts" aria-live="polite"></div>
 
+    <script src="/js/mint.js"></script>
     <script src="/js/config.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>

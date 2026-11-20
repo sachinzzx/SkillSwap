@@ -1,17 +1,15 @@
 (function () {
   window.showToast = function (message, type) {
-    const container = document.getElementById("toast-container");
+    const container = document.getElementById("toasts");
     if (!container) return;
 
     const toast = document.createElement("div");
-    toast.className = "toast toast-" + (type || "info");
+    toast.className = "m-toast " + (type === "error" || type === "err" ? "m-toast--err" : "m-toast--ok");
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
     toast.textContent = message;
     container.appendChild(toast);
     window.setTimeout(function () {
-      toast.classList.add("toast-leave");
-      window.setTimeout(function () {
-        toast.remove();
-      }, 180);
+      toast.remove();
     }, 3500);
   };
 

@@ -5,6 +5,7 @@
     });
     document.querySelectorAll("[data-auth-tab]").forEach(function (tab) {
       const active = tab.dataset.authTab === name;
+      tab.classList.toggle("active", active);
       tab.classList.toggle("border-indigo-400", active);
       tab.classList.toggle("text-white", active);
       tab.classList.toggle("border-transparent", !active);
@@ -53,6 +54,10 @@
 
     document.getElementById("nav-user-name").textContent = user.name;
     document.getElementById("nav-user-role").textContent = user.role;
+    document.getElementById("nav-user-role").classList.toggle("admin", user.role === "ADMIN");
+    document.getElementById("admin-header-strip").classList.toggle("hidden", user.role !== "ADMIN");
+    document.getElementById("header-avatar").textContent =
+      String(user.name || "U").split(/\s+/).slice(0, 2).map(function (part) { return part.charAt(0).toUpperCase(); }).join("");
     document.getElementById("dashboard-name").textContent = user.name;
     document.getElementById("dashboard-date").textContent =
       new Date().toLocaleDateString(undefined, {
@@ -69,6 +74,8 @@
   };
 
   async function logout() {
+    const logoutButton = document.getElementById("logout-button");
+    window.setButtonLoading(logoutButton, true, "Logging out");
     try {
       if (window.state.accessToken) {
         await window.apiRequest("/auth/logout", { method: "POST" });
@@ -79,6 +86,7 @@
       window.clearState();
       window.showAuthView();
       window.showToast("Logged out successfully", "success");
+      window.setButtonLoading(logoutButton, false);
     }
   }
 
@@ -91,6 +99,8 @@
 
   document.getElementById("login-form").addEventListener("submit", async function (event) {
     event.preventDefault();
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    window.setButtonLoading(submitButton, true, "Signing in");
     try {
       const result = await window.apiRequest("/auth/login", {
         method: "POST",
@@ -106,11 +116,15 @@
       window.showToast("Welcome back!", "success");
     } catch (error) {
       window.showToast(error.message, "error");
+    } finally {
+      window.setButtonLoading(submitButton, false);
     }
   });
 
   document.getElementById("register-form").addEventListener("submit", async function (event) {
     event.preventDefault();
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    window.setButtonLoading(submitButton, true, "Creating");
     try {
       await window.apiRequest("/auth/register", {
         method: "POST",
@@ -134,6 +148,8 @@
       await window.loginSuccess();
     } catch (error) {
       window.showToast(error.message, "error");
+    } finally {
+      window.setButtonLoading(submitButton, false);
     }
   });
 
