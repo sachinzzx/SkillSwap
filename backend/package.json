@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "build:frontend": "npm --prefix ../frontend-react install && npm --prefix ../frontend-react run build",
+    "build": "npm run build:frontend",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed"
   },

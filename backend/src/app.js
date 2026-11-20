@@ -39,11 +39,13 @@ app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/chat", chatRoutes);
 app.use("/api/v1/notes", noteRoutes);
 
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/index.html"));
-});
+const reactDist = path.join(__dirname, "../../frontend-react/dist");
 
-app.use(express.static(path.join(__dirname, "../../frontend")));
+app.use(express.static(reactDist));
+
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(reactDist, "index.html"));
+});
 
 app.use(notFoundHandler);
 app.use(errorHandler);
