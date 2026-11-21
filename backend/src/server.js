@@ -11,6 +11,13 @@ let httpServer;
 async function startServer() {
   await connectMongo();
 
+  const skillCount = await prisma.skill.count();
+  if (skillCount === 0) {
+    const seedDatabase = require("../../prisma/seed");
+    await seedDatabase();
+    console.log("SkillSwap database seeded");
+  }
+
   httpServer = app.listen(port, () => {
     console.log(`SkillSwap server running at http://localhost:${port}`);
   });

@@ -15,16 +15,44 @@ class UserSkillService {
    * @param {number|string} hourlyCoinRate - Coin rate for teaching.
    * @returns {Promise<object>} Created user skill.
    */
-  async addSkill(userId, skillId, type, hourlyCoinRate) {
-    const parsedSkillId = Number(skillId);
+  async addSkill(userId, skillId, type, hourlyCoinRate, customName) {
     if (!["TEACH", "LEARN"].includes(type)) {
       throw new BadRequestError("Type must be TEACH or LEARN");
     }
 
-    const skill = await prisma.skill.findUnique({
-      where: { id: parsedSkillId },
-    });
-    if (!skill) throw new NotFoundError("Skill not found");
+    let skill;
+    if (customName) {
+      const name = String(customName).trim();
+      if (!name) throw new BadRequestError("Custom skill name is required");
+
+      const category = await prisma.category.upsert({
+        where: { name: "General" },
+        update: {},
+        create: { name: "General" },
+      });
+      skill = await prisma.skill.findFirst({
+        where: {
+          name: { equals: name, mode: "insensitive" },
+        },
+      });
+      if (!skill) {
+        skill = await prisma.skill.create({
+          data: {
+            name,
+            level: "BEGINNER",
+            categoryId: category.id,
+          },
+        });
+      }
+    } else {
+      const parsedSkillId = Number(skillId);
+      skill = await prisma.skill.findUnique({
+        where: { id: parsedSkillId },
+      });
+      if (!skill) throw new NotFoundError("Skill not found");
+    }
+
+    const parsedSkillId = skill.id;
 
     let rate = 0;
     if (type === "TEACH") {

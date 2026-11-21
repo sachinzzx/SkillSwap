@@ -128,13 +128,15 @@ async function main() {
   console.log("SkillSwap seed completed.");
 }
 
-main()
-  .catch((error) => {
-    console.error("SkillSwap seed failed:", error);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+if (require.main === module) {
+  main()
+    .catch((error) => {
+      console.error("SkillSwap seed failed:", error);
+      process.exitCode = 1;
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
+}
 
 module.exports = main;
