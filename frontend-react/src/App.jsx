@@ -112,7 +112,87 @@ function Header({ user, balance, tab, setTab, onLogout, dark, setDark }) {
   );
 }
 
-function SkillsTab({ user, balance, refreshBalance }) {
+function CustomSkillModal({ open, onClose, onAdded }) {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [type, setType] = useState("LEARN");
+  const [hourlyRate, setHourlyRate] = useState(10);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    apiRequest("/categories")
+      .then(setCategories)
+      .catch((error) => toast.error(error.message));
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      setName("");
+      setDescription("");
+      setCategoryId("");
+      setType("LEARN");
+      setHourlyRate(10);
+    }
+  }, [open]);
+
+  async function submit(event) {
+    event.preventEvent && event.preventEvent();
+    event.preventDefault();
+    const cleanName = name.trim();
+    if (cleanName.length < 2) return toast.error("Skill name must be at least 2 characters");
+    if (cleanName.length > 80) return toast.error("Skill name must be 80 characters or fewer");
+    if (description.trim().length > 500) return toast.error("Description must be 500 characters or fewer");
+    if (type === "TEACH" && (!Number.isInteger(Number(hourlyRate)) || Number(hourlyRate) < 1)) {
+      return toast.error("Hourly coin rate must be at least 1");
+    }
+
+    setBusy(true);
+    try {
+      const association = await apiRequest("/users/skills", {
+        method: "POST",
+        body: {
+          customName: cleanName,
+          description: description.trim(),
+          categoryId: categoryId ? Number(categoryId) : undefined,
+          type,
+          hourlyCoinRate: type === "TEACH" ? Number(hourlyRate) : 0,
+        },
+      });
+      toast.success("Skill added");
+      onAdded(association);
+      onClose();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!open) return null;
+  return (
+    <dialog open className="modal custom-skill-modal" aria-labelledby="custom-skill-title">
+      <div className="modal-body">
+        <div className="modal-head">
+          <div><p className="eyebrow">Your SkillSwap</p><h2 id="custom-skill-title">Add your own skill</h2></div>
+          <button className="icon-button" type="button" onClick={onClose} aria-label="Close"><X size={18} /></button>
+        </div>
+        <form onSubmit={submit}>
+          <div className="field"><label className="label" htmlFor="custom-modal-name">Skill Name</label><input id="custom-modal-name" className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} required placeholder="e.g. Motion design" /></div>
+          <div className="field"><label className="label" htmlFor="custom-modal-description">Short Description <span>Optional</span></label><textarea id="custom-modal-description" className="textarea" value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} placeholder="What will someone learn or teach?" /></div>
+          <div className="field"><label className="label" htmlFor="custom-modal-category">Skill Category <span>Optional</span></label><select id="custom-modal-category" className="input" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}><option value="">General</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></div>
+          <div className="field"><span className="label">Choose One</span><div className="custom-type-options"><button type="button" className={type === "LEARN" ? "active" : ""} onClick={() => setType("LEARN")}><strong>I Want to Learn</strong><span>Find someone who can teach it</span></button><button type="button" className={type === "TEACH" ? "active" : ""} onClick={() => setType("TEACH")}><strong>I Want to Teach</strong><span>Share this skill and earn SkillCoins</span></button></div></div>
+          {type === "TEACH" && <div className="field"><label className="label" htmlFor="custom-modal-rate">Hourly Coin Rate</label><input id="custom-modal-rate" className="input" type="number" min="1" step="1" value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} /></div>}
+          <div className="modal-actions"><button className="btn btn-ghost" type="button" onClick={onClose} disabled={busy}>Cancel</button><button className="btn btn-primary" type="submit" disabled={busy}>{busy ? "Adding..." : "Add Skill"}</button></div>
+        </form>
+      </div>
+    </dialog>
+  );
+}
+
+function SkillsTab({ user, balance, refreshBalance, onOpenCustomSkill, skillRefreshKey }) {
   const [mine, setMine] = useState({ teaching: [], learning: [] });
   const [skills, setSkills] = useState([]);
   const [ledger, setLedger] = useState([]);
@@ -131,14 +211,26 @@ function SkillsTab({ user, balance, refreshBalance }) {
     setSkills(skillsData);
     setLedger(ledgerData);
   }
-  useEffect(() => { load().catch((error) => toast.error(error.message)); }, []);
+  useEffect(() => { load().catch((error) => toast.error(error.message)); }, [skillRefreshKey]);
 
   async function addSkill(event) {
     event.preventDefault();
     if (!skillId) return toast.error("Select a skill");
+    if (skillId === "__custom__") {
+      onOpenCustomSkill();
+      setSkillId("");
+      return;
+    }
     setBusy(true);
     try {
-      await apiRequest("/users/skills", { method: "POST", body: { skillId: Number(skillId), type, hourlyCoinRate: type === "TEACH" ? Number(rate) : 0 } });
+      await apiRequest("/users/skills", {
+        method: "POST",
+        body: {
+          skillId: Number(skillId),
+          type,
+          hourlyCoinRate: type === "TEACH" ? Number(rate) : 0,
+        },
+      });
       toast.success("Skill added");
       setSkillId("");
       await Promise.all([load(), refreshBalance()]);
@@ -171,7 +263,7 @@ function SkillsTab({ user, balance, refreshBalance }) {
           <section><h3>Skills I want to learn</h3><SkillList items={mine.learning || []} teaching={false} /></section>
         </div>
         <form onSubmit={addSkill} className="skill-form">
-          <div className="field"><label className="label" htmlFor="skill-select">Skill</label><select id="skill-select" className="input" value={skillId} onChange={(e) => setSkillId(e.target.value)}><option value="">Select a skill</option>{skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.name} ({skill.level?.toLowerCase()})</option>)}</select></div>
+          <div className="field"><label className="label" htmlFor="skill-select">Skill</label><select id="skill-select" className="input" value={skillId} onChange={(e) => { if (e.target.value === "__custom__") { setSkillId(""); onOpenCustomSkill(); } else setSkillId(e.target.value); }}><option value="">Select a skill</option>{skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.name} ({skill.level?.toLowerCase()})</option>)}<option value="__custom__">+ Add New Skill</option></select></div>
           <div className="segmented"><button type="button" className={type === "TEACH" ? "active" : ""} onClick={() => setType("TEACH")}>Teach</button><button type="button" className={type === "LEARN" ? "active" : ""} onClick={() => setType("LEARN")}>Learn</button></div>
           {type === "TEACH" && <div className="field"><label className="label" htmlFor="skill-rate">SC/hour</label><input id="skill-rate" className="input" type="number" min="1" value={rate} onChange={(e) => setRate(e.target.value)} /></div>}
           <button className="btn btn-primary" disabled={busy}>{busy ? "Adding..." : "+ Add"}</button>
@@ -189,7 +281,7 @@ function SkillsTab({ user, balance, refreshBalance }) {
   );
 }
 
-function MatchTab({ onPrefill }) {
+function MatchTab({ onPrefill, onOpenCustomSkill, skillRefreshKey }) {
   const [skills, setSkills] = useState([]);
   const [skillId, setSkillId] = useState("");
   const [maxRate, setMaxRate] = useState("");
@@ -197,7 +289,7 @@ function MatchTab({ onPrefill }) {
   const [swaps, setSwaps] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => { apiRequest("/skills").then(setSkills).catch((error) => toast.error(error.message)); }, []);
+  useEffect(() => { apiRequest("/skills").then(setSkills).catch((error) => toast.error(error.message)); }, [skillRefreshKey]);
 
   async function searchTeachers(event) {
     event.preventEvent && event.preventEvent();
@@ -229,7 +321,7 @@ function MatchTab({ onPrefill }) {
         <hr className="divider" />
         <h3>Browse teachers</h3>
         <form onSubmit={searchTeachers}>
-          <div className="field"><label className="label" htmlFor="match-skill">Skill</label><select id="match-skill" className="input" value={skillId} onChange={(e) => setSkillId(e.target.value)}><option value="">Select a skill</option>{skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.name}</option>)}</select></div>
+          <div className="field"><label className="label" htmlFor="match-skill">Skill</label><select id="match-skill" className="input" value={skillId} onChange={(e) => { if (e.target.value === "__custom__") { setSkillId(""); onOpenCustomSkill(); } else setSkillId(e.target.value); }}><option value="">Select a skill</option>{skills.map((skill) => <option key={skill.id} value={skill.id}>{skill.name}</option>)}<option value="__custom__">+ Add New Skill</option></select></div>
           <div className="field"><label className="label" htmlFor="match-rate">Max hourly rate (coins)</label><input id="match-rate" className="input" type="number" min="0" placeholder="No maximum" value={maxRate} onChange={(e) => setMaxRate(e.target.value)} /><span className="helper">Filter teachers by their hourly SkillCoin rate.</span></div>
           <button className="btn btn-block" type="submit" disabled={busy}>{busy ? "Searching..." : "Search teachers"}</button>
         </form>
@@ -609,6 +701,8 @@ export default function App() {
   const [prefill, setPrefill] = useState(null);
   const [chatPartner, setChatPartner] = useState(null);
   const [dark, setDark] = useState(() => localStorage.getItem("skillswap_theme") === "dark");
+  const [customSkillModalOpen, setCustomSkillModalOpen] = useState(false);
+  const [skillRefreshKey, setSkillRefreshKey] = useState(0);
 
   useEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
@@ -660,13 +754,21 @@ export default function App() {
         <div className="dashboard-heading"><div><p className="eyebrow">Skills exchange hub</p><h1>Hey, <span className="highlight">{user.name?.split(" ")[0] || "Learner"}</span></h1></div><p className="dashboard-tag">Teach · Earn · Learn · Repeat</p></div>
         <nav className="dashboard-tabs" role="tablist">{TABS.map(([id, label, Icon], index) => <button type="button" role="tab" key={id} aria-selected={tab === id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}><span>{String(index + 1).padStart(2, "0")}</span>{label}</button>)}</nav>
         <div key={tab} className="tab-content">
-          {tab === "skills" && <SkillsTab user={user} balance={balance} refreshBalance={refreshBalance} />}
-          {tab === "match" && <MatchTab onPrefill={prefillBooking} />}
+          {tab === "skills" && <SkillsTab user={user} balance={balance} refreshBalance={refreshBalance} onOpenCustomSkill={() => setCustomSkillModalOpen(true)} skillRefreshKey={skillRefreshKey} />}
+          {tab === "match" && <MatchTab onPrefill={prefillBooking} onOpenCustomSkill={() => setCustomSkillModalOpen(true)} skillRefreshKey={skillRefreshKey} />}
           {tab === "sessions" && <SessionsTab balance={balance} prefill={prefill} refreshBalance={refreshBalance} />}
           {tab === "chat" && <ChatTab initialPartner={chatPartner} />}
           {tab === "analytics" && <AnalyticsTab user={user} />}
         </div>
       </main>
+      <CustomSkillModal
+        open={customSkillModalOpen}
+        onClose={() => setCustomSkillModalOpen(false)}
+        onAdded={async () => {
+          setSkillRefreshKey((value) => value + 1);
+          await refreshBalance();
+        }}
+      />
     </>
   );
 }
