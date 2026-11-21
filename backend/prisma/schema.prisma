@@ -40,13 +40,13 @@ model User {
   refreshToken String?
   createdAt    DateTime @default(now())
 
-  userSkills        UserSkill[]
-  taughtSessions    Session[]        @relation("Teacher")
-  learnedSessions   Session[]        @relation("Learner")
+  userSkills               UserSkill[]
+  taughtSessions           Session[]         @relation("Teacher")
+  learnedSessions          Session[]         @relation("Learner")
   coinTransactionsSent     CoinTransaction[] @relation("Sender")
   coinTransactionsReceived CoinTransaction[] @relation("Receiver")
-  reviewsGiven      Review[]         @relation("Reviewer")
-  reviewsReceived   Review[]         @relation("Reviewed")
+  reviewsGiven             Review[]          @relation("Reviewer")
+  reviewsReceived          Review[]          @relation("Reviewed")
 }
 
 model Category {
@@ -56,21 +56,22 @@ model Category {
 }
 
 model Skill {
-  id         Int     @id @default(autoincrement())
-  name       String  @unique
-  level      Level   @default(BEGINNER)
-  categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  level       Level    @default(BEGINNER)
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
 
   userSkills UserSkill[]
   sessions   Session[]
 }
 
 model UserSkill {
-  id            Int       @id @default(autoincrement())
-  userId        Int
-  skillId       Int
-  type          SkillType
+  id             Int       @id @default(autoincrement())
+  userId         Int
+  skillId        Int
+  type           SkillType
   hourlyCoinRate Int
 
   user  User  @relation(fields: [userId], references: [id])
@@ -91,8 +92,8 @@ model Session {
   coinsCost   Int
   createdAt   DateTime      @default(now())
 
-  teacher User @relation("Teacher", fields: [teacherId], references: [id])
-  learner User @relation("Learner", fields: [learnerId], references: [id])
+  teacher User  @relation("Teacher", fields: [teacherId], references: [id])
+  learner User  @relation("Learner", fields: [learnerId], references: [id])
   skill   Skill @relation(fields: [skillId], references: [id])
 
   coinTransactions CoinTransaction[]

@@ -5,9 +5,10 @@ const { BadRequestError } = require("../errors");
 const userSkillService = new UserSkillService();
 
 const addSkill = asyncHandler(async (req, res) => {
-  const { skillId, customName, type, hourlyCoinRate } = req.body;
-  if ((!skillId && !customName) || !type) {
-    throw new BadRequestError("skillId or customName and type are required");
+  const { skillId, customName, name, description, categoryId, type, hourlyCoinRate } = req.body;
+  const submittedName = customName || name;
+  if ((!skillId && !submittedName) || !type) {
+    throw new BadRequestError("skillId or skill name and type are required");
   }
 
   const userSkill = await userSkillService.addSkill(
@@ -15,7 +16,9 @@ const addSkill = asyncHandler(async (req, res) => {
     skillId,
     type,
     hourlyCoinRate,
-    customName,
+    submittedName,
+    description,
+    categoryId,
   );
 
   res.status(201).json({

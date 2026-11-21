@@ -15,7 +15,7 @@ class UserSkillService {
    * @param {number|string} hourlyCoinRate - Coin rate for teaching.
    * @returns {Promise<object>} Created user skill.
    */
-  async addSkill(userId, skillId, type, hourlyCoinRate, customName) {
+  async addSkill(userId, skillId, type, hourlyCoinRate, customName, description, categoryId) {
     if (!["TEACH", "LEARN"].includes(type)) {
       throw new BadRequestError("Type must be TEACH or LEARN");
     }
@@ -23,13 +23,25 @@ class UserSkillService {
     let skill;
     if (customName) {
       const name = String(customName).trim();
-      if (!name) throw new BadRequestError("Custom skill name is required");
+      if (name.length < 2) throw new BadRequestError("Skill name must be at least 2 characters");
+      if (name.length > 80) throw new BadRequestError("Skill name must be 80 characters or fewer");
 
-      const category = await prisma.category.upsert({
-        where: { name: "General" },
-        update: {},
-        create: { name: "General" },
-      });
+      const cleanDescription = description == null ? null : String(description).trim();
+      if (cleanDescription && cleanDescription.length > 500) {
+        throw new BadRequestError("Description must be 500 characters or fewer");
+      }
+
+      let category;
+      if (categoryId) {
+        category = await prisma.category.findUnique({ where: { id: Number(categoryId) } });
+        if (!category) throw new NotFoundError("Category not found");
+      } else {
+        category = await prisma.category.upsert({
+          where: { name: "General" },
+          update: {},
+          create: { name: "General" },
+        });
+      }
       skill = await prisma.skill.findFirst({
         where: {
           name: { equals: name, mode: "insensitive" },
@@ -39,9 +51,16 @@ class UserSkillService {
         skill = await prisma.skill.create({
           data: {
             name,
+            description: cleanDescription || null,
             level: "BEGINNER",
             categoryId: category.id,
           },
+        });
+      } else if (cleanDescription && !skill.description) {
+        skill = await prisma.skill.update({
+          where: { id: skill.id },
+          data: { description: cleanDescription },
+          include: { category: true },
         });
       }
     } else {
@@ -70,8 +89,14 @@ class UserSkillService {
           type,
         },
       },
+      include: {
+        skill: { include: { category: true } },
+      },
     });
-    if (existing) throw new ConflictError("This skill is already added");
+    if (existing) {
+      if (customName) return existing;
+      throw new ConflictError("This skill is already added");
+    }
 
     return prisma.userSkill.create({
       data: {
