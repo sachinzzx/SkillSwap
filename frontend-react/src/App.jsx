@@ -5,7 +5,7 @@ import {
   MessageCircle, Moon, Plus, Search, Send, Star, Sun, Trash2, Users, Wallet,
   X,
 } from "lucide-react";
-import { apiRequest, clearAuth, saveAuth, state } from "./api";
+import { apiRequest, buildApiUrl, clearAuth, saveAuth, state } from "./api";
 
 const TABS = [
   ["skills", "Skills & Ledger", BookOpen],
@@ -308,7 +308,7 @@ function SessionsTab({ balance, prefill, refreshBalance }) {
   async function downloadReceipt(sessionId) {
     setBusy(true);
     try {
-      const response = await fetch(`/api/v1/sessions/${sessionId}/receipt`, { headers: { Authorization: `Bearer ${state.accessToken}` } });
+      const response = await fetch(buildApiUrl(`/sessions/${sessionId}/receipt`), { headers: { Authorization: `Bearer ${state.accessToken}` } });
       if (!response.ok) throw new Error("Could not download receipt");
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
