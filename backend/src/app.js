@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 const {
   errorHandler,
   notFoundHandler,
@@ -17,9 +18,24 @@ const noteRoutes = require("./routes/note.routes");
 const accessLogger = require("./middlewares/logger.middleware");
 
 const app = express();
+app.use(cors({
+  origin: "https://skillswap-frontend-4fo7.onrender.com",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 app.use(express.json({ limit: "1mb" }));
 app.use(accessLogger);
+app.use((req, res, next) => {
+  const allowedOrigin = process.env.FRONTEND_URL || "*";
+  res.header("Access-Control-Allow-Origin", allowedOrigin);
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
